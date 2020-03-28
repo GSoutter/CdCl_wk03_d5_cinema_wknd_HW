@@ -1,5 +1,7 @@
 require_relative('../db/sql_runner.rb')
 
+require('pry-byebug')
+
 class Screening
 
   attr_accessor :film_id, :showtime, :capacity
@@ -59,4 +61,20 @@ class Screening
     return screenings.map {|screen| Screening.new(screen)}
   end
 
+  def film()
+    sql = "SELECT * FROM films WHERE id = $1"
+    values = [@film_id]
+    film = SqlRunner.run(sql, values).first
+    # binding.pry
+    # nil
+    return Film.new(film)
+  end
+
+  def tickets_num()
+    sql = "SELECT * FROM tickets WHERE screening_id = $1"
+    values = [@id]
+    tickets = SqlRunner.run(sql, values)
+    tickets_array = tickets.map{|tick| Ticket.new(tick)}
+    return tickets_array.length
+  end
 end #class end

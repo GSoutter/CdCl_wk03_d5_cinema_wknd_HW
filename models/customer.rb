@@ -9,6 +9,8 @@ class Customer
     @name = options['name']
     @funds = options['funds']
     @id = options['id'].to_i if options['id']
+    @matinee_start = 11.0
+    @matinee_end = 15.0
   end
 
   def save()
@@ -57,9 +59,15 @@ class Customer
     return films.map {|film| Film.new(film)}
   end
 
-  def buy_ticket(film)
-    ticket = Ticket.new({'customer_id'=>@id, 'film_id' => film.id})
-    @funds -= film.price
+  def buy_ticket(screening)
+    return if screening.tickets_num() >= screening.capacity()
+    ticket = Ticket.new({'customer_id'=>@id, 'screening_id' => screening.id})
+    if (screening.showtime >= @matinee_start) && (screening.showtime < @matinee_end)
+      ticket_price = screening.film.price.to_f / 2
+      @funds -= ticket_price
+    else
+      @funds -= screening.film.price.to_f
+    end
     update()
     ticket.save()
   end
