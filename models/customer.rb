@@ -57,5 +57,21 @@ class Customer
     return films.map {|film| Film.new(film)}
   end
 
+  def buy_ticket(film)
+    ticket = Ticket.new({'customer_id'=>@id, 'film_id' => film.id})
+    @funds -= film.price
+    update()
+    ticket.save()
+  end
+
+  def tickets_num()
+    sql = "SELECT * FROM tickets WHERE customer_id = $1"
+    values = [@id]
+    tickets = SqlRunner.run(sql, values)
+    tickets_array = tickets.map{|tick| Ticket.new(tick)}
+    return tickets_array.length
+
+  end
+
 
 end #class end
