@@ -70,7 +70,6 @@ class Customer
     tickets = SqlRunner.run(sql, values)
     tickets_array = tickets.map{|tick| Ticket.new(tick)}
     return tickets_array.length
-
   end
 
 
