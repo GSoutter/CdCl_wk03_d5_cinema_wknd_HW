@@ -48,15 +48,15 @@ class Customer
     return customers.map {|cust| Customer.new(cust)}
   end
 
-  def films()
+  def screenings()
     sql = "
-    SELECT films.* FROM films
+    SELECT screenings.* FROM screenings
     INNER JOIN tickets
-    ON films.id = tickets.film_id
+    ON screenings.id = tickets.screening_id
     WHERE tickets.customer_id = $1"
     values = [@id]
-    films = SqlRunner.run(sql, values)
-    return films.map {|film| Film.new(film)}
+    screenings = SqlRunner.run(sql, values)
+    return screenings.map {|screen| Screening.new(screen)}
   end
 
   def buy_ticket(screening)
@@ -78,6 +78,15 @@ class Customer
     tickets = SqlRunner.run(sql, values)
     tickets_array = tickets.map{|tick| Ticket.new(tick)}
     return tickets_array.length
+  end
+
+  def films()
+    screenings = screenings()
+    films_array = []
+    for screen in screenings
+        films_array.push(screen.film)
+    end
+    return films_array
   end
 
 

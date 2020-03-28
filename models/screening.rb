@@ -64,17 +64,32 @@ class Screening
   def film()
     sql = "SELECT * FROM films WHERE id = $1"
     values = [@film_id]
-    film = SqlRunner.run(sql, values).first
+    film = SqlRunner.run(sql, values).first()
     # binding.pry
     # nil
     return Film.new(film)
   end
 
-  def tickets_num()
+  def tickets
     sql = "SELECT * FROM tickets WHERE screening_id = $1"
     values = [@id]
     tickets = SqlRunner.run(sql, values)
-    tickets_array = tickets.map{|tick| Ticket.new(tick)}
-    return tickets_array.length
+    return tickets.map{|tick| Ticket.new(tick)}
   end
+
+  def tickets_num()
+    return tickets().length
+  end
+
+  def customers()
+    sql = "SELECT customers.* from customers
+    INNER JOIN tickets
+    ON tickets.customer_id = customers.id
+    WHERE tickets.screening_id = $1
+    "
+    values = [@id]
+    customers = SqlRunner.run(sql, values)
+    return customers.map{|cust| Customer.new(cust)}
+  end
+
 end #class end

@@ -47,26 +47,48 @@ class Film
   end
 
   def customers
-    sql = "
-    SELECT customers.* FROM customers
-    INNER JOIN tickets
-    ON customers.id = tickets.customer_id
-    WHERE tickets.film_id = $1
-    "
+    screenings_array = screenings()
+    customers_array = []
+
+    for screening in screenings_array
+      customers_array += screening.customers
+    end
+
+    return customers_array
+  end
+
+  def screenings()
+    sql = "SELECT * FROM screenings WHERE film_id = $1"
     values = [@id]
-    customers = SqlRunner.run(sql, values)
-    return customers.map {|cust| Customer.new(cust)}
+    screenings = SqlRunner.run(sql, values)
+    return screenings.map{|screen| Screening.new(screen)}
   end
 
   def tickets_num()
-    sql = "SELECT * FROM tickets WHERE film_id = $1"
-    values = [@id]
-    tickets = SqlRunner.run(sql, values)
-    tickets_array = tickets.map{|tick| Ticket.new(tick)}
-    return tickets_array.length
+    screenings_array = screenings()
+
+    return screenings_array.reduce(0){|sum, screen| sum + screen.tickets_num}
   end
 
-  
+  def most_popular()
+    screenings_array = screenings()
+    most_popular_times = []
+    most_tickets = 0
+    for screen in screenings_array
+      if screen.tickets_num > most_tickets
+        most_popular_times = []
+        most_popular_times.push(screen.showtime)
+        most_tickets = screen.tickets_num
+      elsif screen.tickets_num = most_tickets
+        most_popular_times.push(screen.showtime)
+      else
+        nil
+      end
+    end
+
+    return most_popular_times
+  end
+
 
 
 end #class end
