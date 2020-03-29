@@ -22,6 +22,12 @@ film1.save()
 film2 = Film.new({'title' => 'IT', 'price' => 7.50})
 film2.save()
 
+film3 = Film.new({'title' => 'ET', 'price' => 2.50})
+film3.save()
+
+film4 = Film.new({'title' => 'The Thing', 'price' => 10.50})
+film4.save()
+
 screening1 = Screening.new({'film_id' => film1.id, 'showtime' => 22.00, 'capacity' => 4})
 screening1.save()
 

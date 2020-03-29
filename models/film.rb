@@ -41,7 +41,7 @@ class Film
   end
 
   def Film.all()
-    sql = "SELECT * FROM films"
+    sql = "SELECT * FROM films ORDER BY price"
     films = SqlRunner.run(sql, [])
     return films.map {|film| Film.new(film)}
   end
